@@ -2,25 +2,31 @@
 
 Communities for Youtube
 
-## Install the dependencies
+---
+# Instruções
+
+## Instale as dependências
 ```bash
 npm install
 ```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
+### Executar em modo de Desenvolvimento (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
 ```
 
-### Lint the files
+### Lint nos arquivos
 ```bash
 npm run lint
 ```
 
-### Build the app for production
+### Build para produção
 ```bash
 quasar build
 ```
 
-### Customize the configuration
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+## Prévia
+
+![Screen](screenshot_1.png)
+
+![Screen](screenshot_2.png)
