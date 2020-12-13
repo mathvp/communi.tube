@@ -12,7 +12,7 @@
     </q-input>
     <div class="q-mt-xl form-actions">
       <q-btn no-caps class="q-mr-md" padding="10px 65px" size="lg" color="primary" label="Entrar" />
-      <q-btn no-caps class="cancel-btn" color="primary" padding="10px 60px" size="lg" outline label="Cadastrar" />
+      <q-btn no-caps :to="{ name: 'signup' }" class="cancel-btn" color="primary" padding="10px 60px" size="lg" outline label="Cadastrar" />
     </div>
   </div>
 </template>
@@ -36,11 +36,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  .q-field--outlined .q-field__control:before {
-    border: 1px solid $primary;
-  }
-
+<style>
   .form-actions button span{
     font-size: 14px;
     font-weight: bold;
