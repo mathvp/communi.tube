@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <email-phone class="q-mt-md"/>
+    <q-input outlined color="primary" v-model="email" placeholder="Email" />
 
     <div class="row">
       <div class="col-md-6 col-xs-12 q-pr-sm">
@@ -93,17 +93,14 @@
 </template>
 
 <script>
-import EmailPhoneInput from 'components/base/inputs/EmailPhoneInput'
 
 export default {
   name: 'SignUpForm',
-  components: {
-    'email-phone': EmailPhoneInput
-  },
   data () {
     return {
       firstName: '',
       lastName: '',
+      email: '',
       password: '',
       passwordCopy: '',
       isPwd: true,
