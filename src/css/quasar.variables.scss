@@ -26,3 +26,19 @@ $negative  : #eb0000;
 $info      : #1976d2;
 $warning   : #ff9f1c;
 
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+
+$typography-font-family : 'Lato', sans-serif !default;
+
+$text-weights: (thin: 300, light: 300, regular: 400, bold: 700, bolder: 900) !default;
+$button-font-weight: 400;
+
+$body-font-size: 16px;
+$input-font-size: 16px;
+$button-font-size: 16px;
+
+
+$button-border-radius: 5px;
+$input-border-radius: 7px;
+
+

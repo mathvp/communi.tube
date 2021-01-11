@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="url"
+    :src="url(format)"
     :width="width"
     :height="height"
   />
@@ -17,11 +17,24 @@ export default {
     height: {
       type: String,
       default: ''
+    },
+    format: {
+      type: String,
+      default: 'vertical'
     }
   },
   data () {
     return {
-      url: '/images/temp-logo.png'
+    }
+  },
+  methods: {
+    url (format) {
+      const formatUrl = {
+        vertical: '/images/temp-logo.png',
+        horizontal: '/images/temp-logo-horizontal.png'
+      }
+
+      return formatUrl[format]
     }
   }
 }

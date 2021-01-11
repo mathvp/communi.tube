@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <q-form
+    @submit="onSubmit"
+    class="q-gutter-md"
+  >
     <div class="row">
       <div class="col-md-6 col-xs-12 q-pr-sm">
         <q-input outlined v-model="firstName" label="Nome" />
@@ -84,12 +87,12 @@
         <p class="text-primary">Ao clicar em Cadastrar, você concorda com nossos <strong>Termos</strong>, <strong>Política de Dados</strong> e <strong>Política de Cookies</strong></p></div>
       </div>
       <div class="row q-mt-md">
-        <q-btn color="primary" icon-right="send" no-caps label="Cadastrar" size="lg" class="col-12" />
+        <q-btn color="primary" type="submit" icon-right="send" no-caps label="Cadastrar" size="lg" class="col-12" />
       </div>
       <div class="row q-mt-lg">
         <q-btn icon="arrow_back" :to="{ name: 'login' }" color="secondary" no-caps label="Voltar" size="md" outline />
       </div>
-    </div>
+  </q-form>
 </template>
 
 <script>
@@ -126,6 +129,9 @@ export default {
     },
     range (start, stop, step) {
       return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step))
+    },
+    onSubmit (form) {
+      console.log(form)
     }
   }
 }
