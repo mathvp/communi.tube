@@ -1,4 +1,5 @@
 import { axiosInstance } from 'boot/axios'
+import { LocalStorage } from 'quasar'
 
 export default {
   async login (email, password) {
@@ -7,6 +8,12 @@ export default {
       password
     })
       .then((res) => {
+        try {
+          LocalStorage.set('token', res.data.accessToken)
+          LocalStorage.set('id', res.data.id)
+        } catch (error) {
+          return error
+        }
         return { status: res.status, data: res.data }
       })
       .catch((error) => {

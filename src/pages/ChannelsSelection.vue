@@ -3,10 +3,53 @@
     <main-logo class="main-logo responsive-image q-mb-xl" :width="'400'" :format="'horizontal'" />
     <h1 class="text-h4 text-center text-weight-bolder text-secondary q-mt-xl">Quais canais você mais gosta de assistir?</h1>
     <div class="channel-selection-wrapper">
-      <q-input bottom-slots id="channel-search" v-model="searchTerm" placeholder="Digite o nome do canal" outlined>
+      <q-select
+        outlined
+        v-model="searchTerm"
+        use-input
+        hide-selected
+        fill-input
+        input-debounce="0"
+        :options="options"
+        option-value="name"
+        option-label="name"
+        @filter="filterFn"
+        @input="selectChannel"
+        bottom-slots
+        placeholder="Digite o nome do canal"
+        class="q-mb-lg"
+        id="channel-search"
+      >
         <template v-slot:append>
-          <q-icon v-if="searchTerm !== ''" name="close" @click="searchTerm = ''" class="cursor-pointer" />
           <q-icon name="search" />
+        </template>
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Nada encontrado...
+            </q-item-section>
+          </q-item>
+        </template>
+        <template v-slot:option="scope">
+          <q-item
+            clickable
+            v-ripple
+            v-bind="scope.itemProps"
+            v-on="scope.itemEvents"
+          >
+            <q-item-section side>
+              <q-avatar rounded size="48px">
+                <img :src="scope.opt.image_src" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ scope.opt.name }}</q-item-label>
+              <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              Clique para adicionar
+            </q-item-section>
+          </q-item>
         </template>
         <template v-slot:hint>
           <div class="row justify-between text-primary hint">
@@ -14,62 +57,18 @@
             <a href="#">Problemas para encontrar?</a>
           </div>
         </template>
-      </q-input>
+      </q-select>
 
-      <h2 class="text-h5 text-weight-bolder text-secondary q-pt-lg q-pb-md q-mt-xl">Canais selecionados</h2>
+      <h2 v-if="selectedChannelsList.length" class="text-h5 text-weight-bolder text-secondary q-pt-lg q-pb-md q-mt-xl">Canais selecionados</h2>
 
-      <q-list class="channel-list q-gutter-md">
-        <q-item class="channel-list-item" clickable v-ripple>
-          <q-item-section class="avatar-wrapper" avatar top>
-            <q-avatar class="q-mr-sm avatar-img" size="52px">
-              <img src="https://yt3.ggpht.com/ytc/AAUvwnh3qcXoKDGfaEE_tqvBu-VCHcUg0lEPXjBNFT4rgA=s176-c-k-c0x00ffffff-no-rj-mo">
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <div class="row justify-start q-gutter-lg channel-info">
-              <div class="text-weight-bold text-subtitle1">Flow Podcast</div>
-              <div class="row justify-start channel-stats">
-                <div class="q-pr-sm text-weight-regular internal-followers">33.768</div>
-                <div class="internal-followers-icon"><q-icon name="group" /></div>
-              </div>
-            </div>
-          </q-item-section>
-          <q-item-section top side>
-            <div class="text-grey-8 q-gutter-xs">
-              <q-btn size="16px" flat round icon="close" />
-            </div>
-          </q-item-section>
-        </q-item>
-        <q-item class="channel-list-item" clickable v-ripple>
-          <q-item-section class="avatar-wrapper" avatar top>
-            <q-avatar class="q-mr-sm avatar-img" size="52px">
-              <img src="https://yt3.ggpht.com/ytc/AAUvwniEl2J4ywDc8D41byMawOduXc3mXZCu9PPVzo0wpA=s176-c-k-c0x00ffffff-no-rj-mo">
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <div class="row justify-start q-gutter-lg channel-info">
-              <div class="text-weight-bold text-subtitle1">MW Informática</div>
-              <div class="row justify-start channel-stats">
-                <div class="q-pr-sm text-weight-regular internal-followers">12.056</div>
-                <div class="internal-followers-icon"><q-icon name="group" /></div>
-              </div>
-            </div>
-          </q-item-section>
-          <q-item-section top side>
-            <div class="text-grey-8 q-gutter-xs">
-              <q-btn size="16px" flat round icon="close" />
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-list>
-
-      <div class="text-primary q-py-xl q-pl-md" style="font-size: 18px">
+      <channel-list v-if="selectedChannelsList.length" :channelList="selectedChannelsList" @removeItem="removeItem"/>
+      <div v-if="selectedChannelsList.length" class="text-primary q-py-xl q-pl-md" style="font-size: 18px">
         Não lembra de todos? Sem problemas, você pode adicionar mais canais depois
       </div>
 
-      <div class="channel-selection-actions row q-gutter-sm justify-between q-mb-xl">
+      <div class="channel-selection-actions row q-gutter-sm q-mb-xl" :class="[ selectedChannelsList.length ? 'justify-between' : 'justify-end' ]">
         <q-btn flat no-caps color="primary" class="col-3 q-py-sm" label="Pular"/>
-        <q-btn no-caps size="lg" color="primary" class="text-weight-bold btn-send q-py-sm col-8" label="Ok, já selecionei meus canais favoritos"/>
+        <q-btn @click="saveChannelList" v-if="selectedChannelsList.length" no-caps size="lg" color="primary" class="text-weight-bold btn-send q-py-sm col-8" label="Ok, já selecionei meus canais favoritos"/>
       </div>
     </div>
   </q-page>
@@ -77,15 +76,70 @@
 
 <script>
 import Logo from 'components/base/Logo'
+import SelectedChannelsList from 'components/channel/SelectedChannelsList'
+import UserChannelsService from '../services/user/UserChannelsService'
 
 export default {
   name: 'Login',
   components: {
-    'main-logo': Logo
+    'main-logo': Logo,
+    'channel-list': SelectedChannelsList
   },
   data () {
     return {
-      searchTerm: ''
+      searchTerm: null,
+      listItem: {
+        image: {
+          src: ''
+        },
+        name: '',
+        description: '',
+        subscribers: 0
+      },
+      channelList: [
+        {
+          image_src: 'https://yt3.ggpht.com/ytc/AAUvwnh3qcXoKDGfaEE_tqvBu-VCHcUg0lEPXjBNFT4rgA=s176-c-k-c0x00ffffff-no-rj-mo',
+          name: 'Flow Podcast',
+          description: 'Flow',
+          subscribers: '4000000'
+        },
+        {
+          image_src: 'https://yt3.ggpht.com/ytc/AAUvwniEl2J4ywDc8D41byMawOduXc3mXZCu9PPVzo0wpA=s176-c-k-c0x00ffffff-no-rj-mo',
+          name: 'MW Informática',
+          description: 'MW',
+          subscribers: '3000000'
+        }
+      ],
+      selectedChannelsList: [],
+      options: []
+    }
+  },
+  methods: {
+    removeItem (itemId) {
+      this.selectedChannelsList = this.selectedChannelsList.filter((item) => { return item.id !== itemId })
+    },
+    saveChannelList () {
+      this.callChannelListService().then().catch((error) => {
+        console.log('ERRRRO:', error)
+      })
+    },
+    async callChannelListService () {
+      await UserChannelsService.saveChannels(this.selectedChannelsList)
+    },
+    filterFn (val, update, abort) {
+      if (val.length < 2) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.channelList.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    async selectChannel (channel) {
+      await this.selectedChannelsList.unshift(channel)
+      this.searchTerm = null
     }
   }
 }

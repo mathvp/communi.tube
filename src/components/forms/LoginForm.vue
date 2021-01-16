@@ -40,7 +40,7 @@ export default {
         if (res.status === 401) {
           alert(res.message)
         } else if (res.status === 200 || res.status === 201) {
-          alert('Login ok!')
+          this.$router.push({ name: 'channels-selection' })
         }
       })
     },
