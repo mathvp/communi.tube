@@ -10,7 +10,7 @@
         <div class="row justify-start q-gutter-lg channel-info">
           <div class="text-weight-bold text-subtitle1">{{item.name}}</div>
           <div class="row justify-start channel-stats">
-            <div class="q-pr-sm text-weight-regular internal-followers">33.768</div>
+            <div class="q-pr-sm text-weight-regular internal-followers">{{item.subscribers}}</div>
             <div class="internal-followers-icon"><q-icon name="group" /></div>
           </div>
         </div>

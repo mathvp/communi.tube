@@ -43,7 +43,9 @@
               </q-avatar>
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ scope.opt.name }}</q-item-label>
+              <q-item-label>
+                {{ scope.opt.name }} <q-icon v-if="scope.opt.verified" size="xs" color="info" name="verified" />
+              </q-item-label>
               <q-item-label caption>{{ scope.opt.description }}</q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -78,6 +80,7 @@
 import Logo from 'components/base/Logo'
 import SelectedChannelsList from 'components/channel/SelectedChannelsList'
 import UserChannelsService from '../services/user/UserChannelsService'
+import YoutubeService from '../services/channel/YoutubeService'
 
 export default {
   name: 'Login',
@@ -98,16 +101,11 @@ export default {
       },
       channelList: [
         {
-          image_src: 'https://yt3.ggpht.com/ytc/AAUvwnh3qcXoKDGfaEE_tqvBu-VCHcUg0lEPXjBNFT4rgA=s176-c-k-c0x00ffffff-no-rj-mo',
-          name: 'Flow Podcast',
-          description: 'Flow',
-          subscribers: '4000000'
-        },
-        {
           image_src: 'https://yt3.ggpht.com/ytc/AAUvwniEl2J4ywDc8D41byMawOduXc3mXZCu9PPVzo0wpA=s176-c-k-c0x00ffffff-no-rj-mo',
           name: 'MW Informática',
           description: 'MW',
-          subscribers: '3000000'
+          subscribers: '3000000',
+          verified: true
         }
       ],
       selectedChannelsList: [],
@@ -120,21 +118,27 @@ export default {
     },
     saveChannelList () {
       this.callChannelListService().then().catch((error) => {
-        console.log('ERRRRO:', error)
+        console.log('ERRO:', error)
       })
     },
     async callChannelListService () {
       await UserChannelsService.saveChannels(this.selectedChannelsList)
     },
     filterFn (val, update, abort) {
-      if (val.length < 2) {
+      if (val.length < 5) {
         abort()
         return
       }
 
-      update(() => {
-        const needle = val.toLowerCase()
-        this.options = this.channelList.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      update(async () => {
+        const search = val.toLowerCase()
+        const searchResponse = await YoutubeService.getChannels(search)
+
+        if (searchResponse.status === 200) {
+          this.channelList = searchResponse.data
+        }
+        // this.options = this.channelList.filter(v => v.name.toLowerCase().indexOf(search) > -1)
+        this.options = this.channelList
       })
     },
     async selectChannel (channel) {
