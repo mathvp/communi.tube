@@ -17,7 +17,8 @@ export default {
       return { status: res.status, data: res.data }
     }).catch((error) => {
       console.log(error)
-      return { status: error.response.status, message: error.response.data.error }
+      const msg = (error.response.data.message !== undefined) ? [error.response.data.message] : error.response.data.error.errors.map(e => e.message)
+      return { status: error.response.status, message: msg }
     })
 
     return response

@@ -73,6 +73,31 @@
         <q-btn @click="saveChannelList" v-if="selectedChannelsList.length" no-caps size="lg" color="primary" class="text-weight-bold btn-send q-py-sm col-8" label="Ok, já selecionei meus canais favoritos"/>
       </div>
     </div>
+
+    <q-dialog v-model="formSent">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">{{responseTitle}}</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{responseMessage}}
+          </q-card-section>
+
+          <q-card-section v-if="responseErrors.length" class="q-pt-none">
+            <div v-for="(error, index) in responseErrors" :key="index">{{error}}</div>
+          </q-card-section>
+
+          <q-card-section v-if="!responseErrors.length" class="q-pt-none">
+            Aguarde {{counter}}...
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn v-if="responseErrors.length" label="OK" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
   </q-page>
 </template>
 
@@ -91,6 +116,11 @@ export default {
   data () {
     return {
       searchTerm: null,
+      responseTitle: '',
+      responseMessage: '',
+      responseErrors: [],
+      counter: 5,
+      formSent: false,
       listItem: {
         image: {
           src: ''
@@ -122,7 +152,30 @@ export default {
       })
     },
     async callChannelListService () {
-      await UserChannelsService.saveChannels(this.selectedChannelsList)
+      const response = await UserChannelsService.saveChannels(this.selectedChannelsList).then((res) => {
+        if (res.status === 200) {
+          this.responseTitle = 'Tudo certo!'
+          this.responseMessage = 'Seus canais preferidos foram salvos'
+          return true
+        }
+
+        this.responseTitle = 'Erro'
+        this.responseMessage = 'Houve um erro ao tentar salvar os canais...'
+        return false
+      }).catch((error) => {
+        this.responseTitle = 'Erro'
+        this.responseMessage = 'Houve um erro ao tentar salvar os canais...'
+
+        console.log(error)
+
+        return false
+      }).finally(() => {
+        this.formSent = true
+      })
+
+      if (response) {
+        this.redirect(5)
+      }
     },
     filterFn (val, update, abort) {
       if (val.length < 5) {
@@ -137,13 +190,22 @@ export default {
         if (searchResponse.status === 200) {
           this.channelList = searchResponse.data
         }
-        // this.options = this.channelList.filter(v => v.name.toLowerCase().indexOf(search) > -1)
         this.options = this.channelList
       })
     },
     async selectChannel (channel) {
       await this.selectedChannelsList.unshift(channel)
       this.searchTerm = null
+    },
+    redirect (time) {
+      this.counter = time
+      const timer = setInterval(() => {
+        if (this.counter === 1) {
+          clearInterval(timer)
+          this.$router.push({ name: 'login' })
+        }
+        this.counter -= 1
+      }, 1000)
     }
   }
 }
