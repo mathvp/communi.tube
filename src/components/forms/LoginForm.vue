@@ -17,6 +17,23 @@
       <q-btn no-caps type="submit" class="q-mr-md" padding="10px 65px" size="lg" color="primary" label="Entrar" />
       <q-btn no-caps :to="{ name: 'signup' }" class="cancel-btn" color="primary" padding="10px 60px" size="lg" outline label="Cadastrar" />
     </div>
+
+    <q-dialog v-model="loginError">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Erro</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          {{errorMessage}}
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     </q-form>
 </template>
 
@@ -31,17 +48,19 @@ export default {
     return {
       email: '',
       password: '',
-      isPwd: true
+      isPwd: true,
+      loginError: false,
+      errorMessage: ''
     }
   },
   methods: {
     onSubmit () {
       this.login().then((res) => {
-        if (res.status === 401) {
-          alert(res.message)
-        } else if (res.status === 200 || res.status === 201) {
+        if (res.status === 200 || res.status === 201) {
           this.$router.push({ name: 'channels-selection' })
         }
+        this.errorMessage = res.message
+        this.loginError = true
       })
     },
     async login () {

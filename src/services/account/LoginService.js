@@ -17,6 +17,7 @@ export default {
         return { status: res.status, data: res.data }
       })
       .catch((error) => {
+        console.log(error)
         return { status: error.response.status, message: error.response.data.error }
       })
 
