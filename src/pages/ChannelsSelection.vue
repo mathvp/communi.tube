@@ -202,7 +202,7 @@ export default {
       const timer = setInterval(() => {
         if (this.counter === 1) {
           clearInterval(timer)
-          this.$router.push({ name: 'login' })
+          this.$router.push({ name: 'complete-profile' })
         }
         this.counter -= 1
       }, 1000)
