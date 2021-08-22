@@ -1,4 +1,3 @@
-
 const routes = [
   {
     path: '/',
@@ -7,8 +6,22 @@ const routes = [
       { path: '', component: () => import('pages/Login.vue') },
       { path: 'login', name: 'login', component: () => import('pages/Login.vue') },
       { path: 'cadastrar', name: 'signup', component: () => import('pages/SignUp.vue') },
-      { path: 'escolher-canais', name: 'channels-selection', component: () => import('pages/ChannelsSelection.vue') },
-      { path: 'completar-perfil', name: 'complete-profile', component: () => import('pages/CompleteProfile.vue') }
+      {
+        path: 'escolher-canais',
+        name: 'channels-selection',
+        component: () => import('pages/ChannelsSelection.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'completar-perfil',
+        name: 'complete-profile',
+        component: () => import('pages/CompleteProfile.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      }
     ]
   },
   // Always leave this as last one,

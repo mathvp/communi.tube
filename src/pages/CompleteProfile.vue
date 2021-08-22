@@ -12,6 +12,7 @@
           </q-badge>
         </q-avatar>
         <h4 class="text-h4 text-weight-bold">{{firstName}} {{lastName}}</h4>
+
       </div>
 
       <q-dialog
